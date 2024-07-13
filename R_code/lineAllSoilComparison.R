@@ -44,8 +44,3 @@ final_plot <- (plot_soil_test1 + plot_soil_test2 +
 
 # Print the final combined plot
 print(final_plot)
-
-
-# Print the final combined plot
-print(final_plot)
-
