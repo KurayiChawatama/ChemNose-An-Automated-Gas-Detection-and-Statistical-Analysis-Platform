@@ -1,6 +1,6 @@
 # Load the data
-soil_data <- read.csv("evrenselGasSoil4.csv")
-norm_data <- read.csv("evrenselGasNorms1.csv")
+soil_data <- read.csv("soilGasSample1.csv")
+norm_data <- read.csv("noSoilGasSample1.csv")
 
 # Calculate means before and after 216 seconds
 mean_before <- colMeans(norm_data[, c("CO2_PPM", "CH4_PPM", "H2_PPM")])

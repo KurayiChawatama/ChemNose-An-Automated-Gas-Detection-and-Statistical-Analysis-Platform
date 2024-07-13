@@ -89,13 +89,6 @@ boxplot_H2 <- ggplot(day2_data, aes(x = "", y = H2_PPM)) +
   geom_hline(yintercept = quantile(day2_data$H2_PPM, probs = c(0.05, 0.95)), 
              color = "red", linetype = "dashed", size = 1)
 
-# Display the box plots
-print(boxplot_temperature)
-print(boxplot_humidity)
-print(boxplot_CO2)
-print(boxplot_CH4)
-print(boxplot_H2)
-
 # Combine plots using patchwork
 print((boxplot_temperature | boxplot_humidity) /
         (boxplot_CO2 | boxplot_CH4 | boxplot_H2))

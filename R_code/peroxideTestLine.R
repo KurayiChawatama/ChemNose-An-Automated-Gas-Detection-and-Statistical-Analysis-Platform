@@ -19,8 +19,5 @@ print(ggplot(data_long, aes(x = Seconds, y = PPM, color = Gas)) +
        x = "Time (seconds)",
        y = "Concentration (PPM)",
        color = "Gas Type") +
-  theme_minimal() +      # Minimal theme
+  theme_classic() +      # Minimal theme
   theme(text = element_text(size = 12))) # Increase font size
-
-# Save the plot as a PNG file
-ggsave("Gas_Levels_Visualization.png", width = 10, height = 6)

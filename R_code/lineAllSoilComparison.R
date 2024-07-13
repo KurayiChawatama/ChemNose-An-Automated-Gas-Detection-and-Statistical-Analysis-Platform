@@ -38,7 +38,7 @@ plot_soil_test2 <- plot_gas_line(soil_test2, "Soil Test 2 Gas Levels Over Time")
 plot_soil_test3 <- plot_gas_line(soil_test3, "Soil Test 3 Gas Levels Over Time")
 plot_soil_test4 <- plot_gas_line(soil_test4, "Soil Test 4 Gas Levels Over Time")
 
-ffinal_plot <- (plot_soil_test1 + plot_soil_test2 +
+final_plot <- (plot_soil_test1 + plot_soil_test2 +
   plot_soil_test3 + plot_soil_test4 + plot_layout(ncol = 2)) + plot_empty_chamber +
   plot_layout(ncol = 2)
 
