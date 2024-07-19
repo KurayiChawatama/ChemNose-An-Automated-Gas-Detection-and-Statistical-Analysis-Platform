@@ -1,33 +1,49 @@
-# Create a data frame with your results
-test_results <- data.frame(
-  Gas = c("CO2", "CH4", "H2"),
-  Before = c(402.9467, 15.20722, 0.5111111),
-  After1 = c(403.9578, 40.67278, 0.8094444),
-  After2 = c(403.4683, 53.00167, 0.855),
-  After3 = c(403.39, 36.54444, 0.7066667),
-  After4 = c(403.5439, 46.33222, 0.8794444)
-)
+# Load necessary libraries
+library(tidyr)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+
+# Function to read and summarize CSV files
+read_and_summarize <- function(file) {
+  data <- read.csv(file)
+  summarized_data <- data %>%
+    summarize(
+      CO2 = mean(CO2_PPM, na.rm = TRUE),
+      CH4 = mean(CH4_PPM, na.rm = TRUE),
+      H2 = mean(H2_PPM, na.rm = TRUE)
+    )
+  summarized_data$Condition <- gsub(".csv", "", file) # Add the condition based on file name
+  return(summarized_data)
+}
+
+# Read and summarize the empty chamber data
+no_soil_data <- read_and_summarize("noSoilGasSample1.csv")
+
+# Read and summarize the soil sample data
+soil_data1 <- read_and_summarize("soilGasSample1.csv")
+soil_data2 <- read_and_summarize("soilGasSample2.csv")
+soil_data3 <- read_and_summarize("soilGasSample3.csv")
+soil_data4 <- read_and_summarize("soilGasSample4.csv")
+
+# Combine all summarized data
+combined_data <- bind_rows(no_soil_data, soil_data1, soil_data2, soil_data3, soil_data4)
+
+# Reshape the data for plotting
+combined_data_long <- pivot_longer(combined_data, cols = -Condition, names_to = "Gas", values_to = "Value")
 
 # Define colors for bars
 colors <- c("#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd")
 
-# Reshape the data for plotting
-library(tidyr)
-test_results_long <- pivot_longer(test_results, cols = -Gas, names_to = "Condition", values_to = "Value")
-
-# Plotting using ggplot2
-library(ggplot2)
-library(patchwork)
-
 # Function to create individual plots for each gas type
 plot_gas <- function(gas_name) {
-  ggplot(test_results_long[test_results_long$Gas == gas_name, ], aes(x = Condition, y = Value, fill = Condition)) +
+  ggplot(combined_data_long[combined_data_long$Gas == gas_name, ], aes(x = Condition, y = Value, fill = Condition)) +
     geom_bar(position = "dodge", stat = "identity") +
-    labs(title = paste("Comparison of", gas_name, "Levels Before and After Soil Test"),
-         x = "Condition", y = "Mean Concentration") +
+    labs(title = paste("Comparison of", gas_name, "Levels in Empty Chamber vs Soil Samples"),
+         x = "Condition", y = "Mean Concentration (PPM)") +
     scale_fill_manual(values = colors, name = "Condition",
-                      breaks = c("Before", "After1", "After2", "After3", "After4"),
-                      labels = c("Before", "After 1", "After 2", "After 3", "After 4")) +
+                      breaks = c("noSoilGasSample1", "soilGasSample1", "soilGasSample2", "soilGasSample3", "soilGasSample4"),
+                      labels = c("Empty Chamber", "Soil Sample 1", "Soil Sample 2", "Soil Sample 3", "Soil Sample 4")) +
     theme_minimal()
 }
 
