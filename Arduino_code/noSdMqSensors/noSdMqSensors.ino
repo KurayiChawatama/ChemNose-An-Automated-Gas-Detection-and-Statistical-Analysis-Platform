@@ -1,6 +1,31 @@
+/**
+ * @file noSdMqSensors.ino
+ * @brief Gas Concentration Monitoring without SD Card Logging
+ *
+ * This sketch is designed for the ChemNose project to monitor gas concentrations from MQ-135, MQ-4, and MQ-8 sensors
+ * and display the readings of CO2, CH4, and H2 gases on the serial monitor. It operates without the need for an SD card,
+ * making it suitable for real-time monitoring or integration into larger systems where data logging is handled elsewhere.
+ *
+ * The readings are adjusted for offsets and displayed in parts per million (PPM), providing immediate insights into
+ * the environmental conditions being monitored. This setup is optimized for quick deployment and testing, offering
+ * a streamlined approach to gas detection with the ChemNose project's sensor array.
+ *
+
+ * @author Kurayi Chawatama
+ * @date 2024-07-20
+ *
+ * @note This code is a simplified version of the ChemNose project's environmental monitoring suite, focusing on
+ * gas concentration measurements without data logging capabilities. It demonstrates the flexibility of the project's
+ * hardware and software design, allowing for various configurations based on specific research or operational needs.
+ * - The MQ unified sensor library head file was edited to a load resistor of 1k ohms
+ * @see For more information on the MQUnifiedsensor library and sensor calibration, consult the official documentation
+ * and GitHub repository of the MQUnifiedsensor project.
+ */
+
 #include <MQUnifiedsensor.h>
 
-// MQ-135 Definitions
+// Sensor Definitions
+// MQ-135 for CO2 detection
 #define PlacaMQ135 "Arduino UNO"
 #define PinMQ135 A0
 #define TypeMQ135 "MQ-135"
@@ -8,18 +33,19 @@
 #define ADCBitResolution 10
 #define RatioMQ135CleanAir 3.6
 
-// MQ-4 Definitions (Changed Pin to A3)
+// MQ-4 for CH4 (methane) detection
 #define BoardMQ4 "Arduino UNO"
 #define PinMQ4 A3 // Analog input A3 of your Arduino
 #define TypeMQ4 "MQ-4"
 #define RatioMQ4CleanAir 4.4
 
-// MQ-8 Definitions
+// MQ-8 for H2 (hydrogen) detection
 #define BoardMQ8 "Arduino UNO"
 #define PinMQ8 A1 // Analog input A1 of your Arduino
 #define TypeMQ8 "MQ-8"
 #define RatioMQ8CleanAir 70
 
+// Sensor initialization
 MQUnifiedsensor MQ135(PlacaMQ135, VoltageResolution, ADCBitResolution, PinMQ135, TypeMQ135);
 MQUnifiedsensor MQ4(BoardMQ4, VoltageResolution, ADCBitResolution, PinMQ4, TypeMQ4);
 MQUnifiedsensor MQ8(BoardMQ8, VoltageResolution, ADCBitResolution, PinMQ8, TypeMQ8);
@@ -28,18 +54,22 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Seconds,CO2_PPM,CH4_PPM,H2_PPM");
 
+  // Sensor setup and calibration
   // MQ-135 Setup
-  MQ135.setRegressionMethod(1);
-  MQ135.setA(110.47); MQ135.setB(-2.862);
-  MQ135.init();
+  MQ135.setRegressionMethod(1); // Set linear regression method for more accurate readings
+  MQ135.setA(110.47); // Set 'A' parameter of the equation
+  MQ135.setB(-2.862); // Set 'B' parameter of the equation
+  MQ135.init(); // Initialize the sensor
 
+  // Calibrate MQ-135 and calculate R0 value
   float calcR0MQ135 = 0;
   for (int i = 0; i < 10; i++) {
-    MQ135.update();
-    calcR0MQ135 += MQ135.calibrate(RatioMQ135CleanAir);
+    MQ135.update(); // Update sensor value
+    calcR0MQ135 += MQ135.calibrate(RatioMQ135CleanAir); // Calibrate with clean air ratio
   }
-  MQ135.setR0(calcR0MQ135 / 10);
+  MQ135.setR0(calcR0MQ135 / 10); // Set the calculated R0
 
+  // Repeat setup and calibration for MQ-4 and MQ-8 sensors
   // MQ-4 Setup
   MQ4.setRegressionMethod(1);
   MQ4.setA(1012.7); MQ4.setB(-2.786);
@@ -66,25 +96,3 @@ void setup() {
 }
 
 void loop() {
-  // MQ-135 Reading
-  MQ135.update();
-  float CO2_PPM = MQ135.readSensor();
-
-  // MQ-4 Reading
-  MQ4.update();
-  float CH4_PPM = MQ4.readSensor();
-
-  // MQ-8 Reading
-  MQ8.update();
-  float H2_PPM = MQ8.readSensor();
-
-  Serial.print(millis() / 1000); // Print seconds elapsed
-  Serial.print(",");
-  Serial.print(CO2_PPM + 400); // Adjust CO2 PPM to correct offset
-  Serial.print(",");
-  Serial.print(CH4_PPM);
-  Serial.print(",");
-  Serial.println(H2_PPM / 100);
-
-  delay(2000); // Sampling frequency
-}

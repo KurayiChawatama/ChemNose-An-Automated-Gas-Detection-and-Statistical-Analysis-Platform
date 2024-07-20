@@ -1,8 +1,29 @@
+/**
+ * @file MQsWSDCard.ino
+ * @brief Gas Level Monitoring and Data Logging
+ *
+ * This sketch is designed for the ChemNose project to automate gas detection and analysis by collecting readings
+ * from MQ-135, MQ-4, and MQ-8 sensors and saving the data to an SD card. It focuses on monitoring CO2, CH4, and H2
+ * gas levels for environmental monitoring and analysis.
+ *
+ * @author Kurayi Chawatama
+ * @date 2024-07-20
+ *
+ * @note This code is integral to the ChemNose project's objective of providing a comprehensive environmental
+ * monitoring solution. It leverages the Arduino platform and specific gas sensors to gather and log data,
+ * facilitating further analysis of gas concentrations in various environments.
+ * - The MQ unified sensor library head file was edited to a load resistor of 1k ohms
+ *
+ * @see For detailed information on the MQUnifiedsensor library and sensor calibration, consult the official
+ * documentation and GitHub repository of the MQUnifiedsensor project.
+ */
+
 #include <MQUnifiedsensor.h>
 #include <SPI.h>
 #include <SD.h>
 
-// MQ-135 Definitions
+// Sensor Definitions
+// MQ-135 for detecting a wide range of gases, including CO2
 #define PlacaMQ135 "Arduino UNO"
 #define PinMQ135 A0
 #define TypeMQ135 "MQ-135"
@@ -10,13 +31,13 @@
 #define ADCBitResolution 10
 #define RatioMQ135CleanAir 3.6
 
-// MQ-4 Definitions
+// MQ-4 for detecting methane (CH4) levels
 #define BoardMQ4 "Arduino UNO"
 #define PinMQ4 A3 // Analog input A3 of your Arduino
 #define TypeMQ4 "MQ-4"
 #define RatioMQ4CleanAir 4.4
 
-// MQ-8 Definitions
+// MQ-8 for detecting hydrogen (H2) gas
 #define BoardMQ8 "Arduino UNO"
 #define PinMQ8 A1 // Analog input A1 of your Arduino
 #define TypeMQ8 "MQ-8"
@@ -29,19 +50,19 @@ MQUnifiedsensor MQ8(BoardMQ8, VoltageResolution, ADCBitResolution, PinMQ8, TypeM
 
 #define CHIP_SELECT 4 // Define SD card chip select pin
 
-const char *filename = "levels.csv"; // Use a shorter filename
+const char *filename = "levels.csv"; // Use a shorter filename for compatibility
 
 unsigned long previousMillis = 0; // Store the last time measurement was made
 int seconds = 0; // Initialize seconds counter
 
 void setup() {
-  // Initialize serial communication
+  // Serial and SD Card Initialization
+  // Initializes serial communication and the SD card module, creating a new CSV file if it doesn't exist.
   Serial.begin(9600);
   while (!Serial) {
     ; // Wait for serial port to connect
   }
 
-  // Initialize the SD card
   Serial.print("Initializing SD card...");
   if (!SD.begin(CHIP_SELECT)) {
     Serial.println("Card failed, or not present");
@@ -49,7 +70,6 @@ void setup() {
   }
   Serial.println("Card initialized.");
 
-  // Create or open the file and write the header if it's newly created
   if (!SD.exists(filename)) {
     File dataFile = SD.open(filename, FILE_WRITE);
     if (dataFile) {
@@ -63,56 +83,32 @@ void setup() {
     Serial.println("CSV file already exists.");
   }
 
-  // MQ-135 Setup
-  MQ135.setRegressionMethod(1);
+  // Sensor Initialization
+  // Configures each gas sensor with specific calibration and regression settings.
+  MQ135.setRegressionMethod(1); // Using linear regression
   MQ135.setA(110.47); MQ135.setB(-2.862);
   MQ135.init();
 
-  // MQ-4 Setup
-  MQ4.setRegressionMethod(1);
+  MQ4.setRegressionMethod(1); // Using linear regression
   MQ4.setA(1012.7); MQ4.setB(-2.786);
   MQ4.init();
 
-  // MQ-8 Setup
-  MQ8.setRegressionMethod(1);
+  MQ8.setRegressionMethod(1); // Using linear regression
   MQ8.setA(976.97); MQ8.setB(-0.688);
   MQ8.init();
 }
 
 void loop() {
-  // Measure gas levels every second
+  // Main Loop
+  // Collects readings from each sensor every second, formats the data, and saves it to the SD card.
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= 1000) {
     previousMillis = currentMillis;
     seconds++;
 
-    // MQ-135 Reading
+    // Reading Gas Levels
     MQ135.update();
     float CO2_PPM = MQ135.readSensor() + 400; // Adjust CO2 PPM to correct offset
 
-    // MQ-4 Reading
     MQ4.update();
     float CH4_PPM = MQ4.readSensor();
-
-    // MQ-8 Reading
-    MQ8.update();
-    float H2_PPM = MQ8.readSensor() / AdjustFactorMQ8; // Adjust H2 PPM to display correctly
-
-    // Create a data string in CSV format
-    String dataString = String(seconds) + "," + String(CO2_PPM) + "," + String(CH4_PPM) + "," + String(H2_PPM, 2);
-
-    // Open the file
-    File dataFile = SD.open(filename, FILE_WRITE);
-
-    // If the file is available, write to it
-    if (dataFile) {
-      dataFile.println(dataString);
-      dataFile.close();
-      // Print to the serial port too
-      Serial.println(dataString);
-    } else {
-      // If the file isn't open, pop up an error
-      Serial.println("Error opening gas_levels.csv");
-    }
-  }
-}

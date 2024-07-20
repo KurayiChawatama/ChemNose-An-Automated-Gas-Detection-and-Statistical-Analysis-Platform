@@ -1,3 +1,24 @@
+/**
+ * @file weatherStationNoUv.ino
+ * @brief Weather Station Data Collection and Analysis without UV Sensor
+ *
+ * This sketch is part of the ChemNose project, designed to collect environmental data including temperature, humidity,
+ * CO2, CH4, and H2 levels using various sensors. The data is logged to an SD card with timestamps for further analysis.
+ * This setup aims to monitor and analyze environmental conditions for scientific research and educational purposes.
+ *
+ * @author Kurayi Chawatama
+ * @date 2024-07-20
+ *
+ * @note This code is a component of the ChemNose project, aimed at creating a versatile and modular environmental
+ * monitoring platform. It supports the project's goals by providing detailed environmental data crucial for
+ * analyzing gas presence and environmental conditions in various settings.
+ * - The MQ unified sensor library head file was edited to a load resistor of 1k ohms
+
+ *
+ * @see For more information on the sensors and libraries used, refer to the respective manufacturer's documentation
+ * and the GitHub repositories for the MQUnifiedsensor, Bonezegei_DHT11, and RtcDS1302 libraries.
+ */
+
 #include <MQUnifiedsensor.h>
 #include <SPI.h>
 #include <SD.h>
@@ -5,7 +26,8 @@
 #include <ThreeWire.h>
 #include <RtcDS1302.h>
 
-// MQ-135 Definitions
+// Sensor Definitions
+// MQ-135 for CO2, MQ-4 for CH4, MQ-8 for H2, DHT11 for temperature and humidity
 #define PlacaMQ135 "Arduino UNO"
 #define PinMQ135 A0
 #define TypeMQ135 "MQ-135"
@@ -13,48 +35,47 @@
 #define ADCBitResolution 10
 #define RatioMQ135CleanAir 3.6
 
-// MQ-4 Definitions (Changed Pin to A3)
 #define BoardMQ4 "Arduino UNO"
-#define PinMQ4 A3 // Analog input A3 of your Arduino
+#define PinMQ4 A3
 #define TypeMQ4 "MQ-4"
 #define RatioMQ4CleanAir 4.4
 
-// MQ-8 Definitions
 #define BoardMQ8 "Arduino UNO"
-#define PinMQ8 A1 // Analog input A1 of your Arduino
+#define PinMQ8 A1
 #define TypeMQ8 "MQ-8"
 #define RatioMQ8CleanAir 70
-#define AdjustFactorMQ8 100.0 // Adjust factor for MQ-8 output
+#define AdjustFactorMQ8 100.0
 
 MQUnifiedsensor MQ135(PlacaMQ135, VoltageResolution, ADCBitResolution, PinMQ135, TypeMQ135);
 MQUnifiedsensor MQ4(BoardMQ4, VoltageResolution, ADCBitResolution, PinMQ4, TypeMQ4);
 MQUnifiedsensor MQ8(BoardMQ8, VoltageResolution, ADCBitResolution, PinMQ8, TypeMQ8);
 
-#define DHT_PIN 2 // Define DHT11 signal pin
-#define CHIP_SELECT 4 // Define SD card chip select pin
+#define DHT_PIN 2
+#define CHIP_SELECT 4
 
 Bonezegei_DHT11 dht(DHT_PIN);
-ThreeWire myWire(6, 7, 8); // Changed to IO 6, SCLK 7, CE 8
+ThreeWire myWire(6, 7, 8);
 RtcDS1302<ThreeWire> Rtc(myWire);
 
-const char *filename = "day2.csv"; // Use a shorter filename
+const char *filename = "day2.csv";
 
 void setup() {
-  // Initialize serial communication
+  // Initialize serial communication, sensors, RTC, and SD card
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
-  // Initialize the DHT11 sensor
+  // Sensor Initialization
+  // DHT11 for temperature and humidity
   dht.begin();
-  
-  // Initialize the RTC module
+
+  // RTC module for timekeeping
   Rtc.Begin();
   RtcDateTime compiled = RtcDateTime(__DATE__, __TIME__);
   Rtc.SetDateTime(compiled);
 
-  // Initialize the SD card
+  // SD card for data logging
   Serial.print("Initializing SD card...");
   if (!SD.begin(CHIP_SELECT)) {
     Serial.println("Card failed, or not present");
@@ -62,7 +83,6 @@ void setup() {
   }
   Serial.println("card initialized.");
 
-  // Create or open the file and write the header if it's newly created
   if (!SD.exists(filename)) {
     File dataFile = SD.open(filename, FILE_WRITE);
     if (dataFile) {
@@ -76,93 +96,4 @@ void setup() {
     Serial.println("CSV file already exists.");
   }
 
-  // MQ-135 Setup
-  MQ135.setRegressionMethod(1);
-  MQ135.setA(110.47); MQ135.setB(-2.862);
-  MQ135.init();
-
-  float calcR0MQ135 = 0;
-  for (int i = 0; i < 10; i++) {
-    MQ135.update();
-    calcR0MQ135 += MQ135.calibrate(RatioMQ135CleanAir);
-  }
-  MQ135.setR0(calcR0MQ135 / 10);
-
-  // MQ-4 Setup
-  MQ4.setRegressionMethod(1);
-  MQ4.setA(1012.7); MQ4.setB(-2.786);
-  MQ4.init();
-
-  float calcR0MQ4 = 0;
-  for (int i = 0; i < 10; i++) {
-    MQ4.update();
-    calcR0MQ4 += MQ4.calibrate(RatioMQ4CleanAir);
-  }
-  MQ4.setR0(calcR0MQ4 / 10);
-
-  // MQ-8 Setup
-  MQ8.setRegressionMethod(1);
-  MQ8.setA(976.97); MQ8.setB(-0.688);
-  MQ8.init();
-
-  float calcR0MQ8 = 0;
-  for (int i = 0; i < 10; i++) {
-    MQ8.update();
-    calcR0MQ8 += MQ8.calibrate(RatioMQ8CleanAir);
-  }
-  MQ8.setR0(calcR0MQ8 / 10);
-}
-
-void loop() {
-  // Get current date and time from RTC
-  RtcDateTime now = Rtc.GetDateTime();
-  String datetime = getDateTimeString(now);
-
-  // Get data from DHT11 sensor
-  if (dht.getData()) { // Get all data from DHT11
-    float tempDeg = dht.getTemperature(); // Return temperature in Celsius
-    int hum = dht.getHumidity(); // Return humidity
-
-    // MQ-135 Reading
-    MQ135.update();
-    float CO2_PPM = MQ135.readSensor() + 400; // Adjust CO2 PPM to correct offset
-
-    // MQ-4 Reading
-    MQ4.update();
-    float CH4_PPM = MQ4.readSensor();
-
-    // MQ-8 Reading
-    MQ8.update();
-    float H2_PPM = MQ8.readSensor() / AdjustFactorMQ8; // Adjust H2 PPM to display as 0.55 instead of 55
-
-    // Create a data string in CSV format
-    String dataString = datetime + "," + String(tempDeg) + "," + String(hum) + "," + String(CO2_PPM) + "," + String(CH4_PPM) + "," + String(H2_PPM, 2);
-
-    // Open the file
-    File dataFile = SD.open(filename, FILE_WRITE);
-
-    // If the file is available, write to it
-    if (dataFile) {
-      dataFile.println(dataString);
-      dataFile.close();
-      // Print to the serial port too
-      Serial.println(dataString);
-    } else {
-      // If the file isn't open, pop up an error
-      Serial.println("error opening weather.csv");
-    }
-  } else {
-    // Print an error message if data is not read correctly
-    Serial.println(datetime + ",Error reading data from DHT11");
-  }
-
-  delay(2000); // Delay at least 2 seconds for DHT11 to read the data
-}
-
-String getDateTimeString(const RtcDateTime& dt) {
-  char datestring[20];
-  snprintf(datestring, sizeof(datestring), "%02u/%02u/%04u %02u:%02u:%02u",
-           dt.Month(), dt.Day(), dt.Year(),
-           dt.Hour(), dt.Minute(), dt.Second());
-  return String(datestring);
-}
+  // Gas sensors setup with specific calibration and regression settings
