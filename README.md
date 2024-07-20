@@ -1,4 +1,4 @@
-# ChemNose: An Arduino and R-Based Platform for Gas Detection and Chemical Analysis with Automated Data Processing
+# ChemNose:An Automated Gas Detection and Statistical Analysis Platform
 
 ## Table of Contents
 - [Overview](#overview)
