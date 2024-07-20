@@ -1,4 +1,3 @@
-# Load the data
 norm_data <- read.csv("noSoilGasSample1.csv")
 soil_data <- read.csv("soilGasSample1.csv")
 

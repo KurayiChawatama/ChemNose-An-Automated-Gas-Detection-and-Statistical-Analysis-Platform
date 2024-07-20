@@ -1,4 +1,3 @@
-# Load necessary libraries
 library(tidyr)
 library(ggplot2)
 library(dplyr)
