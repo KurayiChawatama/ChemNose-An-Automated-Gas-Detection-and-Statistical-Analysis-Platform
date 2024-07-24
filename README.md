@@ -72,11 +72,11 @@ The Circuit Diagram for the Gas Detection Modules are shown below:
 
 <div style="display: flex; align-items: flex-start;">
     <div style="margin-right: 20px;">
-        <img src="Images/Circuits/noSDCardMQs.png" alt="Gas Detection Circuit Diagram" title="Gas Detection Circuit Diagram" width="350"/>
+        <img src="Images/Circuits/noSDCardMQs.png" alt="Gas Detection Circuit Diagram" title="Gas Detection Circuit Diagram" width="200"/>
         <p style="text-align: left;"><em>(without SD card functionality)</em></p>
     </div>
     <div>
-        <img src="Images/Circuits/SDCardMQs.png" alt="Gas Detection Circuit Diagram with SD Card Functionality" title="Gas Detection Circuit Diagram with SD Card Functionality" width="350"/>
+        <img src="Images/Circuits/SDCardMQs.png" alt="Gas Detection Circuit Diagram with SD Card Functionality" title="Gas Detection Circuit Diagram with SD Card Functionality" width="200"/>
         <p style="text-align: left;"><em>(with SD card functionality)</em></p>
     </div>
 </div>
@@ -92,19 +92,19 @@ A novel 350ml closed gas chamber was designed and made using an airtight plastic
 
 <div style="display: flex; justify-content: space-around; align-items: center;">
     <div>
-        <img src="Images/Sensor Setup/SensorBoxLid.jpeg" alt="Sensor Box Lid" width="175"/>
+        <img src="Images/Sensor Setup/SensorBoxLid.jpeg" alt="Sensor Box Lid" width="150"/>
         <p style="text-align: center;"><em>Sensor Box Lid</em></p>
     </div>
     <div>
-        <img src="Images/Sensor Setup/ClosedBoxTop.jpeg" alt="Closed Box Top View" width="175"/>
+        <img src="Images/Sensor Setup/ClosedBoxTop.jpeg" alt="Closed Box Top View" width="150"/>
         <p style="text-align: center;"><em>Closed Box Top View</em></p>
     </div>
     <div>
-        <img src="Images/Sensor Setup/BoxInLab.jpeg" alt="Box in Laboratory Setting" width="175"/>
+        <img src="Images/Sensor Setup/BoxInLab.jpeg" alt="Box in Laboratory Setting" width="150"/>
         <p style="text-align: center;"><em>Box in Laboratory Setting</em></p>
     </div>
     <div>
-        <img src="Images/Sensor Setup/OpenLabBox.jpeg" alt="Open Box in Laboratory" width="175"/>
+        <img src="Images/Sensor Setup/OpenLabBox.jpeg" alt="Open Box in Laboratory" width="150"/>
         <p style="text-align: center;"><em>Open Box in Laboratory</em></p>
     </div>
 </div>
@@ -130,11 +130,11 @@ They generate plots like the ones shown below:
 
 <img src="Images/Graphs/BoxPlotExample.jpeg" alt="Box Plot Example" title="Box Plot Example" width="350"/>
 
-*Box Plot Example*
+_Box Plot Example_
 
 <img src="Images/Graphs/DayLinePlotExample" alt="Line Plot For Weather Example" title="Line Plot For Weather Example" width="350"/>
 
-*Day Line Plot Example*
+_Day Line Plot Example_
 
 ## Future Directions For the Project
 - Add a VEML6070 UV Sensor to the Weather Station to measure UV Index.
