@@ -2,6 +2,7 @@
 
 ## Table of Contents
 ## Table of Contents
+## Table of Contents
 - [Overview](#overview)
 - [Materials And Methods](#materials-and-methods)
   - [The Weather Station Module](#the-weather-station-module)
@@ -10,6 +11,8 @@
   - [The Soil Moisture Module](#the-soil-moisture-module)
 - [Data Analysis Pipeline](#data-analysis-pipeline)
   - [Weather Station Data Analysis](#weather-station-data-analysis)
+  - [Gas Detection Data Analysis](#gas-detection-data-analysis)
+  - [Soil Moisture Data Analysis](#soil-moisture-data-analysis)
 - [Future Directions For the Project](#future-directions-for-the-project)
 
 ## Overview
@@ -72,11 +75,11 @@ The Circuit Diagram for the Gas Detection Modules are shown below:
 
 <div style="display: flex; align-items: flex-start;">
     <div style="margin-right: 20px;">
-        <img src="Images/Circuits/noSDCardMQs.png" alt="Gas Detection Circuit Diagram" title="Gas Detection Circuit Diagram" width="200"/>
+        <img src="Images/Circuits/noSDCardMQs.png" alt="Gas Detection Circuit Diagram" title="Gas Detection Circuit Diagram" width="350"/>
         <p style="text-align: left;"><em>(without SD card functionality)</em></p>
     </div>
     <div>
-        <img src="Images/Circuits/SDCardMQs.png" alt="Gas Detection Circuit Diagram with SD Card Functionality" title="Gas Detection Circuit Diagram with SD Card Functionality" width="200"/>
+        <img src="Images/Circuits/SDCardMQs.png" alt="Gas Detection Circuit Diagram with SD Card Functionality" title="Gas Detection Circuit Diagram with SD Card Functionality" width="350"/>
         <p style="text-align: left;"><em>(with SD card functionality)</em></p>
     </div>
 </div>
@@ -92,19 +95,19 @@ A novel 350ml closed gas chamber was designed and made using an airtight plastic
 
 <div style="display: flex; justify-content: space-around; align-items: center;">
     <div>
-        <img src="Images/Sensor Setup/SensorBoxLid.jpeg" alt="Sensor Box Lid" width="150"/>
+        <img src="Images/Sensor Setup/SensorBoxLid.jpeg" alt="Sensor Box Lid" width="175"/>
         <p style="text-align: center;"><em>Sensor Box Lid</em></p>
     </div>
     <div>
-        <img src="Images/Sensor Setup/ClosedBoxTop.jpeg" alt="Closed Box Top View" width="150"/>
+        <img src="Images/Sensor Setup/ClosedBoxTop.jpeg" alt="Closed Box Top View" width="175"/>
         <p style="text-align: center;"><em>Closed Box Top View</em></p>
     </div>
     <div>
-        <img src="Images/Sensor Setup/BoxInLab.jpeg" alt="Box in Laboratory Setting" width="150"/>
+        <img src="Images/Sensor Setup/BoxInLab.jpeg" alt="Box in Laboratory Setting" width="175"/>
         <p style="text-align: center;"><em>Box in Laboratory Setting</em></p>
     </div>
     <div>
-        <img src="Images/Sensor Setup/OpenLabBox.jpeg" alt="Open Box in Laboratory" width="150"/>
+        <img src="Images/Sensor Setup/OpenLabBox.jpeg" alt="Open Box in Laboratory" width="175"/>
         <p style="text-align: center;"><em>Open Box in Laboratory</em></p>
     </div>
 </div>
@@ -124,7 +127,7 @@ Setup the Weather Station Module and run the [Arduino_code/weatherStationNoUv/we
 
 **Step 2: Data Analysis**  
 Retrieve the CSV file from the SD card and move it into the repository folder called [Sensor_data](Sensor_data). The data titled `DAY1.csv` and `DAY2.csv` is an example of the data that will be collected.  
-Boxplot alongside summary statistics and Line plots of the metrics can be obtained by using the [R_code/day2Boxes.R](R_code/day2Boxes.R) and [R_code/day2Lines.R](R_code/day2Lines.R) scripts.
+Boxplot alongside textual summary statistics and Line plots of the metrics can be obtained by using the [R_code/day2Boxes.R](R_code/day2Boxes.R) and [R_code/day2Lines.R](R_code/day2Lines.R) scripts.
 
 They generate plots like the ones shown below:
 
@@ -135,6 +138,40 @@ _Box Plot Example_
 <img src="Images/Graphs/DayLinePlotExample" alt="Line Plot For Weather Example" title="Line Plot For Weather Example" width="350"/>
 
 _Day Line Plot Example_
+
+### Gas Detection Data Analysis
+The data analysis for gas can be done one of two ways; A mode purely for observation of gas levels in a soil sample or given reaction in the gas chamber and the second being a mode where data from multiple soil samples is compared together. 
+
+Step 1: Data Collection
+Setup the Gas Detection Module and run the [Arduino_code/MQsWSDCard/MQsWSDCard.ino](Arduino_code/MQsWSDCard/MQsWSDCard.ino) Arduino sketch on the Arduino Uno. The data will be stored in a CSV file on the SD card in a name of your choosing, or alternatively you can copy and paste the CSV output from the serial monitor and into a new CSV file.
+
+Step 2: Data Analysis
+- To simply observe the changes in gas levels in a soil sample or given reaction over time, you can use the [R_code/peroxideTestLine.R](R_code/peroxideTestLine.R) script. This script generates a line plot of the gas levels over time. To test the script, you can use the soilGasSample data or the Peroxide Reaction data in the [Sensor_data](Sensor_data) folder. This produces a plot like the one shown below:
+
+<img src="Images/Graphs/PeroxideObservationExample.jpeg" alt="Soil Gas Sample Line Plot" title="Soil Gas Sample Line Plot" width="350"/>
+
+_Gas Change Over Time Line Plot. When Observing reactions sharper peaks indicate more vigorous reactions_
+
+- To compare the changes in gas levels in multiple soil samples as well as an empty chamber, you can use the [R_code/barAllSoilComparison.R](R_code/barAllSoilComparison.R) and the [R_code/lineAllSoilComparison.R](R_code/lineAllSoilComparison.R) script. These scripts generate a patched graphic of line plots of gas change over time and bar plots of mean changes per gas side by side respectively. To test the script, you can use the soilGasSample data in the [Sensor_data](Sensor_data) folder. This produces plots like the ones shown below:
+
+<img src="Images/Graphs/LineComparisonExample.jpeg" alt="All Soil Line Plot" title="All Soil Line Plot" width="350"/>
+
+_Multiple Sample Gas Change Over Time Comparison Line Plot_
+
+<img src="Images/Graphs/BarPlotExample.jpeg" alt="All Soil Bar Plot" title="All Soil Bar Plot" width="350"/>
+
+_Multiple Sample Means Comparison Bar Plot_
+
+- The [R_code/WilcoxonSigned-RankTest.R(R_code/WilcoxonSigned-RankTest.R) script can be used to perform a Wilcoxon Signed Rank Test on the data to determine if there is a significant difference in the gas levels between the soil samples and an empty gas chamber such that a conclusion can be made that the soil is the source of the gas. This script generates a textual output of the test results. To test the script, you can use the soilGasSample data in the [Sensor_data](Sensor_data) folder. The test follows the hypotheses:
+
+```
+(H₀): μ CH4 before = μ CH4 after |  (H₀): μ CO2 before = μ CO2 after | (H₀): μ H2 before = μ H2 after
+
+(H₁): μ CH4 before < μ CH4 after | (H₁): μ CO2 before < μ CO2 after | (H₁): μ H2 before > μ H2 after
+```
+
+### Soil Moisture Data Analysis
+ This is quite straightforward and the data can be read an interpreted all by using the serial monitor output. 
 
 ## Future Directions For the Project
 - Add a VEML6070 UV Sensor to the Weather Station to measure UV Index.
