@@ -1,7 +1,9 @@
 # ChemNose:An Automated Gas Detection and Statistical Analysis Platform
 
-## Table of Contents
-## Table of Contents
+<div style="text-align: center;">
+    <img src="Images/Ulurover Logo.jpg" alt="ULUROVER Logo" title="ULUROVER LOGO" width="350"/>
+</div>
+
 ## Table of Contents
 - [Overview](#overview)
 - [Materials And Methods](#materials-and-methods)
