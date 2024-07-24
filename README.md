@@ -1,6 +1,7 @@
 # ChemNose:An Automated Gas Detection and Statistical Analysis Platform
 
 ## Table of Contents
+## Table of Contents
 - [Overview](#overview)
 - [Materials And Methods](#materials-and-methods)
   - [The Weather Station Module](#the-weather-station-module)
@@ -118,6 +119,22 @@ For measurement and classification of soil sample humidity in the lab setting, a
 
 ### Weather Station Data Analysis
 
+**Step 1: Data Collection**  
+Setup the Weather Station Module and run the [Arduino_code/weatherStationNoUv/weatherStationNoUv.ino](Arduino_code/weatherStationNoUv/weatherStationNoUv.ino) Arduino sketch on the Arduino Uno. The data will be stored in a CSV file on the SD card in a name of your choosing.
+
+**Step 2: Data Analysis**  
+Retrieve the CSV file from the SD card and move it into the repository folder called [Sensor_data](Sensor_data). The data titled `DAY1.csv` and `DAY2.csv` is an example of the data that will be collected.  
+Boxplot alongside summary statistics and Line plots of the metrics can be obtained by using the [R_code/day2Boxes.R](R_code/day2Boxes.R) and [R_code/day2Lines.R](R_code/day2Lines.R) scripts.
+
+They generate plots like the ones shown below:
+
+<img src="Images/Graphs/BoxPlotExample.jpeg" alt="Box Plot Example" title="Box Plot Example" width="350"/>
+
+*Box Plot Example*
+
+<img src="Images/Graphs/DayLinePlotExample" alt="Line Plot For Weather Example" title="Line Plot For Weather Example" width="350"/>
+
+*Day Line Plot Example*
 
 ## Future Directions For the Project
 - Add a VEML6070 UV Sensor to the Weather Station to measure UV Index.
