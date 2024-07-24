@@ -204,16 +204,16 @@ _Multiple Sample Means Comparison Bar Plot_
 ```
 
 ### Soil Moisture Data Analysis
- This is quite straightforward and the data can be read an interpreted all by using the serial monitor output. 
+This is quite straightforward and the data can be read an interpreted all by using the serial monitor output. 
 
+## Additional Notes
+- Make sure to set the load resistance value in Arduino/libraries/MQUnifiedsensor/MQUnifiedsensor.h to the correct value for the MQ sensors you are using. The default value is 10kΩ, the value on most modules is 1kΩ.
+- The Project was largely inspired by Pineda, D. M., & Pérez, J. C. (2017). SENose: An under U$50 electronic nose for the monitoring of soil gas emissions. Computers and Electronics in Agriculture, 133, 15-21. https://doi.org/10.1016/j.compag.2016.12.004
+- The Project was designed for efficient significance testing with small datasets.
+- The Project is largely limited to use in a theoretical setting where sensors with a high margin of error are used. The data analysis pipeline is also not designed to fully account for this with appropriate normalization and scaling techniques.
+- 
 ## Future Directions For the Project
 - Add a VEML6070 UV Sensor to the Weather Station to measure UV Index.
 - Add a BME280 Sensor to the Weather Station for more accurate temperature and humidity readings as well as barometric pressure readings.
 - Automate the data analysis process with a bash script.
-- Add a pipeline explanatory diagram to the README.md file.
-- Add a section to the README.md file that explains how to use the platform.
 - Add a CSV reading function to the arduino sketch to transfer data to the computer.
-- Add SENose: An under U$50 electronic nose for the monitoring of soil gas emissions as the inspiration 
-- also add the fact that it is designed for efficient significance testing with small datasets
-- add the whole change load resistance in the main file or whatever
--  Maybe go over the limitations of the project and how to improve them
