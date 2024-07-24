@@ -5,6 +5,10 @@
 - [Materials And Methods](#materials-and-methods)
   - [The Weather Station Module](#the-weather-station-module)
     - [The Weather Station Module Carrying Case](#the-weather-station-module-carrying-case)
+  - [The Gas Measurement Chamber For The Gas Detection Modules](#the-gas-measurement-chamber-for-the-gas-detection-modules)
+  - [The Soil Moisture Module](#the-soil-moisture-module)
+- [Data Analysis Pipeline](#data-analysis-pipeline)
+  - [Weather Station Data Analysis](#weather-station-data-analysis)
 - [Future Directions For the Project](#future-directions-for-the-project)
 
 ## Overview
