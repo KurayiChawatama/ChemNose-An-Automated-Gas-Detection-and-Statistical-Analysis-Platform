@@ -17,6 +17,7 @@
 
 ## Overview
 ChemNose is an arduino based gas detection and chemical reaction observation platform. It is designed to be a low cost, portable, and easy to use platform for detecting gases and observing chemical reactions. The platform is built around an Arduino Uno and uses a variety of sensors to detect gases and observe chemical reactions. The platform is designed to be modular and expandable, allowing users to add additional sensors and modules as needed.
+
 It was primarily designed for and used in simulated Mars and Moon exploration science missions for the Anatolian Rover Challenge 2024 by Uludağ University Rover Team (ULUROVER).
 Their science team, under my leadership had a hypothesis investigating the habitability of Mars and Moon for Methanogenic Microorganisms. With this in mind, I designed the platform and data analysis pipeline to fit this task.
 
@@ -52,6 +53,27 @@ It consists fo the following sensors:
 - MQ-8 Gas Sensor
 - DS3231 RTC Module
 - SD Card Module
+
+**The components are configured as follows:**
+
+DHT11 connections:
+- D2
+
+RTC connections:
+- RST- D8
+- DAT - D6
+- CLK- D7
+- **Note** RTC uses 3.3V not 5V
+
+SD connections:
+- CS- D4
+- SCK- D13
+- MOSI- D11
+- MISO- D12
+
+MQ-135: A0
+MQ-4: A3
+MQ-8: A1
 
 #### The Weather Station Module Carrying Case
 
@@ -91,6 +113,17 @@ It consists fo the following sensors:
 - MQ-8 Gas Sensor
 - SD Card Module(Optional)
 
+**The components are configured as follows:**
+SD connections:
+- CS- D4
+- SCK- D13
+- MOSI- D11
+- MISO- D12
+
+MQ-135: A0
+MQ-4: A3
+MQ-8: A1
+
 A novel 350ml closed gas chamber was designed and made using an airtight plastic container with holes to tightly fit the gas sensors. This allows for greater accuracy of the gs measurements. The chamber is setup is shown below:
 
 <div style="display: flex; justify-content: space-around; align-items: center;">
@@ -123,7 +156,7 @@ For measurement and classification of soil sample humidity in the lab setting, a
 ### Weather Station Data Analysis
 
 **Step 1: Data Collection**  
-Setup the Weather Station Module and run the [Arduino_code/weatherStationNoUv/weatherStationNoUv.ino](Arduino_code/weatherStationNoUv/weatherStationNoUv.ino) Arduino sketch on the Arduino Uno. The data will be stored in a CSV file on the SD card in a name of your choosing.
+Set up the Weather Station Module and run the [Arduino_code/weatherStationNoUv/weatherStationNoUv.ino](Arduino_code/weatherStationNoUv/weatherStationNoUv.ino) Arduino sketch on the Arduino Uno. The data will be stored in a CSV file on the SD card in a name of your choosing.
 
 **Step 2: Data Analysis**  
 Retrieve the CSV file from the SD card and move it into the repository folder called [Sensor_data](Sensor_data). The data titled `DAY1.csv` and `DAY2.csv` is an example of the data that will be collected.  
@@ -143,7 +176,7 @@ _Day Line Plot Example_
 The data analysis for gas can be done one of two ways; A mode purely for observation of gas levels in a soil sample or given reaction in the gas chamber and the second being a mode where data from multiple soil samples is compared together. 
 
 Step 1: Data Collection
-Setup the Gas Detection Module and run the [Arduino_code/MQsWSDCard/MQsWSDCard.ino](Arduino_code/MQsWSDCard/MQsWSDCard.ino) Arduino sketch on the Arduino Uno. The data will be stored in a CSV file on the SD card in a name of your choosing, or alternatively you can copy and paste the CSV output from the serial monitor and into a new CSV file.
+Set up the Gas Detection Module and run the [Arduino_code/MQsWSDCard/MQsWSDCard.ino](Arduino_code/MQsWSDCard/MQsWSDCard.ino) Arduino sketch on the Arduino Uno. The data will be stored in a CSV file on the SD card in a name of your choosing, or alternatively you can copy and paste the CSV output from the serial monitor and into a new CSV file.
 
 Step 2: Data Analysis
 - To simply observe the changes in gas levels in a soil sample or given reaction over time, you can use the [R_code/peroxideTestLine.R](R_code/peroxideTestLine.R) script. This script generates a line plot of the gas levels over time. To test the script, you can use the soilGasSample data or the Peroxide Reaction data in the [Sensor_data](Sensor_data) folder. This produces a plot like the one shown below:
@@ -162,7 +195,7 @@ _Multiple Sample Gas Change Over Time Comparison Line Plot_
 
 _Multiple Sample Means Comparison Bar Plot_
 
-- The [R_code/WilcoxonSigned-RankTest.R(R_code/WilcoxonSigned-RankTest.R) script can be used to perform a Wilcoxon Signed Rank Test on the data to determine if there is a significant difference in the gas levels between the soil samples and an empty gas chamber such that a conclusion can be made that the soil is the source of the gas. This script generates a textual output of the test results. To test the script, you can use the soilGasSample data in the [Sensor_data](Sensor_data) folder. The test follows the hypotheses:
+- The [R_code/WilcoxonSigned-RankTest.R](R_code/WilcoxonSigned-RankTest.R) script can be used to perform a Wilcoxon Signed Rank Test on the data to determine if there is a significant difference in the gas levels between the soil samples and an empty gas chamber such that a conclusion can be made that the soil is the source of the gas. This script generates a textual output of the test results. To test the script, you can use the soilGasSample data in the [Sensor_data](Sensor_data) folder. The test follows the hypotheses:
 
 ```
 (H₀): μ CH4 before = μ CH4 after |  (H₀): μ CO2 before = μ CO2 after | (H₀): μ H2 before = μ H2 after
@@ -183,25 +216,4 @@ _Multiple Sample Means Comparison Bar Plot_
 - Add SENose: An under U$50 electronic nose for the monitoring of soil gas emissions as the inspiration 
 - also add the fact that it is designed for efficient significance testing with small datasets
 - add the whole change load resistance in the main file or whatever
--  Maybe go over the limitations of the project
-- why willow signed rank test
-- Maybe change the weather station to also sample every 2 seconds if it doesn't already
-- give MERT his design creds
-- add the fact that the boxes need to have the soil in them 3 mins before taking readings
-- add the fact that the soil moisture sensor needs to have the soil poured over it in a petri dish. Maybe make a diagram
-- TimeTempSD Connections
-DHT11 connections - D2
-
-RTC connections:
-RST- D8
-DAT - D6
-CLK- D7
-RTC uses 3.3V
-SD connections:
-CS- D4
-SCK- D13
-MOSI- D11
-MISO- D12
-
-- collect and cut empty plastic bottle bottoms to make petri dishes for the cas chambers
-- add the fact that the gas sensors need to be warmed up for 24 hours before use
+-  Maybe go over the limitations of the project and how to improve them
