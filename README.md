@@ -213,7 +213,7 @@ This is quite straightforward and the data can be read an interpreted all by usi
 - The Project was largely inspired by Pineda, D. M., & Pérez, J. C. (2017). SENose: An under U$50 electronic nose for the monitoring of soil gas emissions. Computers and Electronics in Agriculture, 133, 15-21. https://doi.org/10.1016/j.compag.2016.12.004
 - The Project was designed for efficient significance testing with small datasets.
 - The Project is largely limited to use in a theoretical setting where sensors with a high margin of error are used. The data analysis pipeline is also not designed to fully account for this with appropriate normalization and scaling techniques.
-- 
+
 ## Future Directions For the Project
 - Add a VEML6070 UV Sensor to the Weather Station to measure UV Index.
 - Add a BME280 Sensor to the Weather Station for more accurate temperature and humidity readings as well as barometric pressure readings.
